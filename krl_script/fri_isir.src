@@ -556,9 +556,9 @@ def cancel_motion()
   brake
   $MSG_T.KEY[] = "Cancelling Motion                  "
   $MSG_T.VALID = true
-  $fri_to_bool[2] = true
   wait sec 0
   resume
+  $fri_to_bool[2] = true
 
 end
 

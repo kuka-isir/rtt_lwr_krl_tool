@@ -771,8 +771,26 @@ bool KRLTool::hasKRLReset()
 
 void KRLTool::cancelMotion()
 {
-    cancelGoals();
     setBit(toKRL.boolData,CANCEL_MOTION,true);
+    port_toKRL.write(toKRL);
+    while(!getBit(fromKRL.boolData,CANCEL_MOTION)){
+        port_fromKRL.read(fromKRL);
+        usleep(250);
+        log(Warning) << "----- Waiting for cancel motion to end-----" << endlog();
+    }
+
+    resetBoolToKRL();
+    while(!hasKRLReset()){
+        verifySpecialCases();
+        port_toKRL.write(toKRL);
+        port_fromKRL.read(fromKRL);
+        usleep(250);
+    }
+
+	log(Warning) << "----- Waiting 1s after stop2-----" << endlog();
+    usleep(10e5);
+
+    cancelGoals();
 }
 
 void KRLTool::PTPJoint(
@@ -1000,8 +1018,7 @@ void KRLTool::updateHook()
             && norm_f >= lin_current_gh.getGoal()->max_allowed_force)
             {
                 // Stop The mouvement, we reach the max allowed force
-                setBit(toKRL.boolData,CANCEL_MOTION,true);
-                lin_current_gh.setAborted();
+				cancelMotion();
                 log(Warning) << "LIN Goal was aborted because max force was reached ("<<norm_f<<" N)"<<endlog();
             }
         }
