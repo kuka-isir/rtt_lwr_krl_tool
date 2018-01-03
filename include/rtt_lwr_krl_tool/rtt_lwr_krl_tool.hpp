@@ -4,6 +4,8 @@
 #ifndef __RTT_LWR_KRL_TOOL_HPP__
 #define __RTT_LWR_KRL_TOOL_HPP__
 
+#include <boost/thread/reverse_lock.hpp>
+
 #include <rtt/TaskContext.hpp>
 #include <rtt/RTT.hpp>
 #include <rtt/Attribute.hpp>
